@@ -23,7 +23,7 @@ class CreateWindow:
         self.label.pack()
         ttk.Button(self.canvas, text='quit', command=self.close).pack(side = 'bottom')
         ttk.Button(self.canvas, text='Next', command=lambda: self.update_label()).pack(side= 'bottom')
-
+        ttk.Button(self.canvas)
 
     def wait_for_close(self):
         self.running = True
