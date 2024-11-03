@@ -1,10 +1,11 @@
 from tkinter import ttk
 from tkinter import *
-
+from gtts import gTTS
+import os
 from phonics import *
 from window import *
 
-win = CreateWindow(800, 800)
+win = CreateWindow(1200, 700)
 
 win.wait_for_close()
 
