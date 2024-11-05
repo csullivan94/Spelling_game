@@ -1,10 +1,19 @@
 from tkinter import Tk, BOTH, Canvas
 from tkinter import ttk
-from phonics import *
 from gtts import gTTS
 import pygame
 from io import BytesIO
 import os
+from word import *
+from word_lists import *
+from itertools import cycle
+
+game_list = []
+for word in year_5_6_words:
+    game_list.append(Word(word))
+
+print(game_list[0].word, game_list[0].split)
+print(game_list[0].missing_sound)
 
 class CreateWindow:
     def __init__(self, width, height):
@@ -20,14 +29,16 @@ class CreateWindow:
 
         self.running = False
         self.__root.protocol('WM_DELETE_WINDOW', self.close)
+        self.i = 0
 
-
-        self.label = ttk.Label(self.canvas, text=game_list[0], font = ("arial", 50))
+        self.label = ttk.Label(self.canvas, text=game_list[self.i].missing_sound, font = ("arial", 50))
         self.label.pack(pady= 200, padx = 200, )
         ttk.Button(self.canvas, text='quit', command=self.close).pack(side = 'bottom')
         ttk.Button(self.canvas, text='Next', command=lambda: self.update_label()).pack(side= 'bottom')
         ttk.Button(self.canvas, text='speak', command =lambda: self.speak()).pack()
-        self.speak_word()
+
+
+
     def wait_for_close(self):
         self.running = True
         while self.running is True:
@@ -41,12 +52,13 @@ class CreateWindow:
         self.__root.update_idletasks()
 
     def update_label(self):
-
-        i = game_list.index(self.label['text'])
-        if i < len(game_list)-1:
-            self.label['text'] = game_list[i+1]
+        if self.i < len(game_list):
+            self.i += 1
+            self.label['text'] = game_list[self.i].missing_sound
         else:
-            self.label['text'] = game_list[0]
+            self.i = 0
+            self.label['text'] = game_list[self.i].missing_sound
+
 
     pygame.init()
     pygame.mixer.init()
@@ -61,6 +73,5 @@ class CreateWindow:
 
 
     def speak_word(self):
-        word = self.label['text']
-        spoken_word = game_dict[word]
+        spoken_word = game_list[self.i].word
         return spoken_word
