@@ -27,22 +27,24 @@ class CreateWindow:
         self.i = 0
         self.game_list = game_list
         self.solution_viewed = False
+        self.word_type = 1
 
         if game_list is None:
             ttk.Label(self.canvas, text = 'No words available', font = ('arial', 50)).pack()
 
         else:
-            self.missing_sound_1 = ttk.Label(self.canvas, text= self.game_list[self.i].split[0], font = ("arial", 30))
+            self.current = self.game_list[self.i]
+            self.missing_sound_1 = ttk.Label(self.canvas, text= self.current.split[0], font = ("arial", 30))
             self.missing_sound_1.pack(pady= 200, side = 'left')
-            self.entry = ttk.Entry(self.canvas, width = len(self.game_list[self.i].split[1])+1, font = ('arial', 30))
+            self.entry = ttk.Entry(self.canvas, width = len(self.current.split[1])+1, font = ('arial', 30))
             self.entry.pack(side = 'left')
-            self.missing_sound_2 = ttk.Label(self.canvas, text= self.game_list[self.i].split[2], font = ('arial', 30))
+            self.missing_sound_2 = ttk.Label(self.canvas, text= self.current.split[2], font = ('arial', 30))
             self.missing_sound_2.pack(side = 'left')
             self.correct_incorrect = ttk.Label(self.canvas, text='', font = ('arial', 20))
-            self.solution_label = ttk.Label(self.canvas, text = self.game_list[self.i].word)
+            self.solution_label = ttk.Label(self.canvas, text = self.current.word)
 
             ttk.Button(self.canvas, text='quit', command=self.close).pack(side = 'bottom')
-            ttk.Button(self.canvas, text='Next', command=lambda: self.update_label()).pack(side= 'bottom')
+            ttk.Button(self.canvas, text='Next', command=lambda: self.next_word()).pack(side= 'bottom')
             ttk.Button(self.canvas, text='speak', command =lambda: self.speak()).pack()
             ttk.Button(self.canvas, text='solution', command = lambda: self.solution()).pack(side = 'bottom')
             ttk.Button(self.canvas, text='submit', command = lambda: self.submit()).pack()
@@ -60,22 +62,41 @@ class CreateWindow:
         self.__root.update()
         self.__root.update_idletasks()
 
-    def update_label(self):
+    def next_word(self):
+        print(self.current)
         if self.i < len(self.game_list)-1:
             self.i += 1
-            self.missing_sound_1['text'] = self.game_list[self.i].split[0]
-            self.missing_sound_2['text'] = self.game_list[self.i].split[2]
+            self.current = self.game_list[self.i]
+            self.word_split()
         else:
             self.i = 0
-            self.missing_sound_1['text'] = self.game_list[self.i].split[0]
-            self.missing_sound_2['text'] = self.game_list[self.i].split[2]
-        self.solution_label['text'] = self.game_list[self.i].word
-        self.solution()
+            self.current = self.game_list[self.i]
+            self.word_split()
+        self.solution_label['text'] = self.current.word
+        self.submit()
         self.solution_label.pack_forget()
         self.correct_incorrect.pack_forget()
         self.entry.config(state = 'normal')
         self.entry.delete(0, 'end')
 
+
+    def word_split(self):
+        if self.current.correct == 0:
+            self.missing_sound_1['text'] = self.current.split[0]
+            self.missing_sound_2['text'] = self.current.split[2]
+            self.entry.pack(side = 'left')
+            self.word_type = 1
+        elif self.current.correct >= 1:
+            if self.current.split[2] is '':
+                self.missing_sound_1['text'] = self.current.split[1]
+                self.missing_sound_2['text'] = self.current.split[2]
+                self.entry.pack(side = 'left')
+                self.word_type = 0
+            else:
+                self.missing_sound_1['text'] = self.current.split[0]
+                self.missing_sound_2['text'] = self.current.split[1]
+                self.entry.pack(side = 'right')
+                self.word_type = 2
 
 
     def speak(self):
@@ -87,9 +108,8 @@ class CreateWindow:
         sound = pygame.mixer.Sound(mp3_fo)
         sound.play()
 
-
     def speak_word(self):
-        spoken_word = self.game_list[self.i].word
+        spoken_word = self.current.word
         return spoken_word
 
     def solution(self):
@@ -97,12 +117,13 @@ class CreateWindow:
         self.entry.config(state = 'disabled')
 
     def submit(self):
-        if self.entry.get() == self.game_list[self.i].split[1]:
+        if self.entry.get() == self.current.split[self.word_type]:
             self.correct_incorrect['text'] = 'correct'
             self.correct_incorrect.pack()
-            self.game_list[self.i].correct += 1
+            self.current.correct += 1
         else:
             self.correct_incorrect['text'] = 'try again'
             self.correct_incorrect.pack()
-            self.game_list[self.i].incorrect += 1
+
+
 

@@ -8,7 +8,6 @@ class Word:
         self.split = self.partition_word()[0]
         self.missing_sound = self.missing_sounds()
         self.correct = 0
-        self.incorrect = 0
 
     def missing_sounds(self):
         missing_sound = self.split[0] + '_'+ self.split[2]
@@ -29,3 +28,5 @@ class Word:
                     partitioned_words.append(self.word.partition(sound))
         return partitioned_words
 
+    def __repr__(self):
+        return f'word: {self.word}\n split: {self.split}\n correct: {self.correct}\n'
