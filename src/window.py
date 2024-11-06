@@ -11,20 +11,20 @@ pygame.init()
 pygame.mixer.init()
 
 class CreateWindow:
-    def __init__(self, width, height, game_list = None):
-        self.width = width
-        self.height = height
+    def __init__(self, game_list = None):
+        self.width = 1500
+        self.height = 1000
         self.__root = Tk()
         self.__root.title('Window')
 
-        self.__root.geometry(f'{width}x{height}')
+        self.__root.geometry(f'{self.width}x{self.height}')
 
-        self.canvas = Canvas(self.__root, width=width, height=height, bg='white')
+        self.canvas = Canvas(self.__root, width=self.width, height=self.height, bg='white')
         self.canvas.pack()
 
         self.running = False
         self.__root.protocol('WM_DELETE_WINDOW', self.close)
-        self.i = 80
+        self.i = 0
         self.game_list = game_list
         self.solution_viewed = False
 
@@ -32,15 +32,20 @@ class CreateWindow:
             ttk.Label(self.canvas, text = 'No words available', font = ('arial', 50)).pack()
 
         else:
-            self.missing_sound_label = ttk.Label(self.canvas, text= self.game_list[self.i].missing_sound, font = ("arial", 50))
-            self.missing_sound_label.pack(pady= 200, padx = 200, )
+            self.missing_sound_1 = ttk.Label(self.canvas, text= self.game_list[self.i].split[0], font = ("arial", 30))
+            self.missing_sound_1.pack(pady= 200, side = 'left')
+            self.entry = ttk.Entry(self.canvas, width = len(self.game_list[self.i].split[1])+1, font = ('arial', 30))
+            self.entry.pack(side = 'left')
+            self.missing_sound_2 = ttk.Label(self.canvas, text= self.game_list[self.i].split[2], font = ('arial', 30))
+            self.missing_sound_2.pack(side = 'left')
+            self.correct_incorrect = ttk.Label(self.canvas, text='', font = ('arial', 20))
             self.solution_label = ttk.Label(self.canvas, text = self.game_list[self.i].word)
 
             ttk.Button(self.canvas, text='quit', command=self.close).pack(side = 'bottom')
             ttk.Button(self.canvas, text='Next', command=lambda: self.update_label()).pack(side= 'bottom')
             ttk.Button(self.canvas, text='speak', command =lambda: self.speak()).pack()
-            ttk.Button(self.canvas, text='solution', command = lambda: self.solution()).pack(side = 'top')
-
+            ttk.Button(self.canvas, text='solution', command = lambda: self.solution()).pack(side = 'bottom')
+            ttk.Button(self.canvas, text='submit', command = lambda: self.submit()).pack()
 
 
     def wait_for_close(self):
@@ -56,14 +61,22 @@ class CreateWindow:
         self.__root.update_idletasks()
 
     def update_label(self):
-        if self.i < len(self.game_list):
+        if self.i < len(self.game_list)-1:
             self.i += 1
-            self.missing_sound_label['text'] = self.game_list[self.i].missing_sound
+            self.missing_sound_1['text'] = self.game_list[self.i].split[0]
+            self.missing_sound_2['text'] = self.game_list[self.i].split[2]
         else:
             self.i = 0
-            self.missing_sound_label['text'] = self.game_list[self.i].missing_sound
+            self.missing_sound_1['text'] = self.game_list[self.i].split[0]
+            self.missing_sound_2['text'] = self.game_list[self.i].split[2]
         self.solution_label['text'] = self.game_list[self.i].word
+        self.solution()
         self.solution_label.pack_forget()
+        self.correct_incorrect.pack_forget()
+        self.entry.config(state = 'normal')
+        self.entry.delete(0, 'end')
+
+
 
     def speak(self):
         mp3_fo = BytesIO()
@@ -81,4 +94,15 @@ class CreateWindow:
 
     def solution(self):
         self.solution_label.pack()
+        self.entry.config(state = 'disabled')
+
+    def submit(self):
+        if self.entry.get() == self.game_list[self.i].split[1]:
+            self.correct_incorrect['text'] = 'correct'
+            self.correct_incorrect.pack()
+            self.game_list[self.i].correct += 1
+        else:
+            self.correct_incorrect['text'] = 'try again'
+            self.correct_incorrect.pack()
+            self.game_list[self.i].incorrect += 1
 

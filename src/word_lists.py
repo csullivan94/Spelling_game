@@ -199,3 +199,6 @@ year_5_6_words = ['accommodate',
 'vegetable',
 'vehicle',
 'yacht']
+
+
+test_list = ['soldier', 'vehicle', 'queue', 'sincerely', 'rhyme']

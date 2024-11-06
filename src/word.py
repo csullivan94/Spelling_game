@@ -7,6 +7,8 @@ class Word:
         self.word = word
         self.split = self.partition_word()[0]
         self.missing_sound = self.missing_sounds()
+        self.correct = 0
+        self.incorrect = 0
 
     def missing_sounds(self):
         missing_sound = self.split[0] + '_'+ self.split[2]
@@ -25,6 +27,5 @@ class Word:
             for sound in phase_2:
                 if sound in self.word:
                     partitioned_words.append(self.word.partition(sound))
-        print(partitioned_words)
         return partitioned_words
 

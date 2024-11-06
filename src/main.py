@@ -5,13 +5,16 @@ import os
 from phonics import *
 from window import *
 from word import *
+import random
 
 
 game_list = []
-for word in year_5_6_words:
+for word in test_list:
     game_list.append(Word(word))
 
-win = CreateWindow(1300, 700, game_list)
+random.shuffle(game_list)
+
+win = CreateWindow(game_list)
 
 win.wait_for_close()
 
