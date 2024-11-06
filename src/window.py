@@ -3,6 +3,7 @@ from tkinter import ttk
 from gtts import gTTS
 import pygame
 from io import BytesIO
+import time
 import os
 from word import *
 from word_lists import *
@@ -72,29 +73,34 @@ class CreateWindow:
             self.i = 0
             self.current = self.game_list[self.i]
             self.word_split()
-        self.solution_label['text'] = self.current.word
-        self.submit()
         self.solution_label.pack_forget()
         self.correct_incorrect.pack_forget()
         self.entry.config(state = 'normal')
         self.entry.delete(0, 'end')
+        self.solution_label['text'] = self.current.word
 
 
     def word_split(self):
         if self.current.correct == 0:
             self.missing_sound_1['text'] = self.current.split[0]
             self.missing_sound_2['text'] = self.current.split[2]
-            self.entry.pack(side = 'left')
+            self.missing_sound_1.pack(side='left')
+            self.entry.pack(side ='left')
+            self.missing_sound_2.pack(side='left')
             self.word_type = 1
         elif self.current.correct >= 1:
-            if self.current.split[2] is '':
+            if self.current.split[2] == '':
                 self.missing_sound_1['text'] = self.current.split[1]
                 self.missing_sound_2['text'] = self.current.split[2]
                 self.entry.pack(side = 'left')
+                self.missing_sound_1.pack(side = 'left')
+                self.missing_sound_2.pack(side = 'left')
                 self.word_type = 0
             else:
                 self.missing_sound_1['text'] = self.current.split[0]
                 self.missing_sound_2['text'] = self.current.split[1]
+                self.missing_sound_1.pack(side='left')
+                self.missing_sound_2.pack(side='left')
                 self.entry.pack(side = 'right')
                 self.word_type = 2
 

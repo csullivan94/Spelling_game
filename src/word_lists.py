@@ -1,3 +1,7 @@
+import random
+
+from word import *
+
 year_3_4_words = ['accidentally', 'accident',
 'actually', 'actual',
 'address',
@@ -202,3 +206,6 @@ year_5_6_words = ['accommodate',
 
 
 test_list = ['soldier', 'vehicle', 'queue', 'sincerely', 'rhyme']
+
+
+
