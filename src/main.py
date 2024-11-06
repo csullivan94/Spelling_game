@@ -9,9 +9,9 @@ import random
 
 def creating_game_list(word_list, game_list):
     i = 0
-    while i < 10:
+    while i < 5:
         j = random.randrange(0, len(word_list))
-        game_list.append(Word(word_list[j]))
+        game_list.append(Word(word_list.pop(j)))
         i+=1
     return game_list
 

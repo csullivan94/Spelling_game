@@ -27,8 +27,8 @@ class CreateWindow:
         self.__root.protocol('WM_DELETE_WINDOW', self.close)
         self.i = 0
         self.game_list = game_list
-        self.solution_viewed = False
         self.word_type = 1
+        self.learnt_words = []
 
         if game_list is None:
             ttk.Label(self.canvas, text = 'No words available', font = ('arial', 50)).pack()
@@ -37,7 +37,7 @@ class CreateWindow:
             self.current = self.game_list[self.i]
             self.missing_sound_1 = ttk.Label(self.canvas, text= self.current.split[0], font = ("arial", 30))
             self.missing_sound_1.pack(pady= 200, side = 'left')
-            self.entry = ttk.Entry(self.canvas, width = len(self.current.split[1])+1, font = ('arial', 30))
+            self.entry = ttk.Entry(self.canvas, width = len(self.current.split[1])+3, font = ('arial', 30))
             self.entry.pack(side = 'left')
             self.missing_sound_2 = ttk.Label(self.canvas, text= self.current.split[2], font = ('arial', 30))
             self.missing_sound_2.pack(side = 'left')
@@ -49,6 +49,7 @@ class CreateWindow:
             ttk.Button(self.canvas, text='speak', command =lambda: self.speak()).pack()
             ttk.Button(self.canvas, text='solution', command = lambda: self.solution()).pack(side = 'bottom')
             ttk.Button(self.canvas, text='submit', command = lambda: self.submit()).pack()
+
 
 
     def wait_for_close(self):
@@ -64,6 +65,12 @@ class CreateWindow:
         self.__root.update_idletasks()
 
     def next_word(self):
+        if len(self.game_list) < 1:
+            self.missing_sound_1['text'] = 'Game Complete'
+            self.missing_sound_1.pack()
+            self.missing_sound_2.pack_forget()
+            self.correct_incorrect.pack_forget()
+            self.entry.pack_forget()
         print(self.current)
         if self.i < len(self.game_list)-1:
             self.i += 1
@@ -88,13 +95,13 @@ class CreateWindow:
             self.entry.pack(side ='left')
             self.missing_sound_2.pack(side='left')
             self.word_type = 1
-        elif self.current.correct >= 1:
+        elif self.current.correct == 1:
             if self.current.split[2] == '':
                 self.missing_sound_1['text'] = self.current.split[1]
                 self.missing_sound_2['text'] = self.current.split[2]
                 self.entry.pack(side = 'left')
-                self.missing_sound_1.pack(side = 'left')
-                self.missing_sound_2.pack(side = 'left')
+                self.missing_sound_1.pack(side ='right')
+                self.missing_sound_2.pack(side ='right')
                 self.word_type = 0
             else:
                 self.missing_sound_1['text'] = self.current.split[0]
@@ -103,6 +110,13 @@ class CreateWindow:
                 self.missing_sound_2.pack(side='left')
                 self.entry.pack(side = 'right')
                 self.word_type = 2
+        else:
+            self.missing_sound_1.pack_forget()
+            self.missing_sound_2.pack_forget()
+            self.entry['width'] = 20
+            self.entry.pack(side = 'left')
+            self.word_type = 3
+
 
 
     def speak(self):
@@ -123,10 +137,21 @@ class CreateWindow:
         self.entry.config(state = 'disabled')
 
     def submit(self):
-        if self.entry.get() == self.current.split[self.word_type]:
+        if self.word_type == 3:
+            if self.entry.get() == self.current.word:
+                self.correct_incorrect['text'] = 'correct'
+                self.correct_incorrect.pack()
+                self.current.correct += 1
+                if self.current.correct == 3:
+                    self.learnt_words.append(self.game_list.pop(self.i))
+            else:
+                self.correct_incorrect['text'] = 'try again'
+                self.correct_incorrect.pack()
+        elif self.entry.get() == self.current.split[self.word_type]:
             self.correct_incorrect['text'] = 'correct'
             self.correct_incorrect.pack()
             self.current.correct += 1
+
         else:
             self.correct_incorrect['text'] = 'try again'
             self.correct_incorrect.pack()
