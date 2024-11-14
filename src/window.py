@@ -1,12 +1,9 @@
-from tkinter import Tk, BOTH, Canvas
+from tkinter import Tk, Canvas
 from tkinter import ttk
 from gtts import gTTS
 import pygame
 from io import BytesIO
-import time
-import os
-from word import *
-from word_lists import *
+
 
 pygame.init()
 pygame.mixer.init()
@@ -35,14 +32,14 @@ class CreateWindow:
 
         else:
             self.current = self.game_list[self.i]
-            self.missing_sound_1 = ttk.Label(self.canvas, text= self.current.split[0], font = ("arial", 30))
-            self.missing_sound_1.pack(pady= 200, side = 'left')
-            self.entry = ttk.Entry(self.canvas, width = len(self.current.split[1])+3, font = ('arial', 30))
+            self.missing_sound_1 = ttk.Label(self.canvas, text= self.current.split[0], font = ("arial", 50))
+            self.missing_sound_1.pack(pady= 100, side = 'left')
+            self.entry = ttk.Entry(self.canvas, width = len(self.current.split[1])+3, font = ('arial', 50))
             self.entry.pack(side = 'left')
-            self.missing_sound_2 = ttk.Label(self.canvas, text= self.current.split[2], font = ('arial', 30))
+            self.missing_sound_2 = ttk.Label(self.canvas, text= self.current.split[2], font = ('arial', 50))
             self.missing_sound_2.pack(side = 'left')
             self.correct_incorrect = ttk.Label(self.canvas, text='', font = ('arial', 20))
-            self.solution_label = ttk.Label(self.canvas, text = self.current.word)
+            self.solution_label = ttk.Label(self.canvas, text = self.current.word, font =('arial', 50))
 
             ttk.Button(self.canvas, text='quit', command=self.close).pack(side = 'bottom')
             ttk.Button(self.canvas, text='Next', command=lambda: self.next_word()).pack(side= 'bottom')
@@ -116,8 +113,6 @@ class CreateWindow:
             self.entry['width'] = 20
             self.entry.pack(side = 'left')
             self.word_type = 3
-
-
 
     def speak(self):
         mp3_fo = BytesIO()
